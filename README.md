@@ -1,20 +1,17 @@
 # MohawkWebCrawler
-Simple scripting language to control web crawling and webpage data scraping.
+Mohawk WebCrawler is a imple scripting language to control web page and PDF data scraping.  PDF data scraping is down by transforming the PDF to a HTML code.
 
 Here's an example of scraping Google stock data off of Yahoo Finance:
-
+	
+	/* declare variables */
 	var price
 	var prevclose
-
 	var hdate
 	var hopen
-	var hhigh
-	var hlow
-	var hclose
 	
-	geturl "http://finance.yahoo.com/q?s={SYMBOL}&ql=1"
+	geturl "http://finance.yahoo.com/q?s={SYMBOL}&ql=1"  // go to web page
 	
-	gotext "({SYMBOL})"
+	gotext "({SYMBOL})" // find symbol
 	
 	nextdiv
 	gettext price
@@ -37,22 +34,18 @@ Here's an example of scraping Google stock data off of Yahoo Finance:
 	nexttable //print "{#CURSOR}"
 	nextrow //print "{#CURSOR}"
 	
-	while (nextrow)
+	while (nextrow) // while table has rows
+	
 		nextcol
 		gettext hdate
 		
-		nextcol
-		gettext hopen
+		if (hdate ~has "Close price adjusted for dividends and splits.")
+			break
+		else
+			nextcol
+			gettext hopen
 		
-		nextcol
-		gettext hhigh
-		
-		nextcol
-		gettext hlow
-		
-		nextcol
-		gettext hclose
-		
-		print "line>> date={hdate}, open={hopen}, high={hhigh}, low={hlow}"
-		commitrow5 "hrow" hdate hopen hhigh hlow hclose
+			print "line>> date={hdate}, open={hopen}"
+			commitrow2 "hrow" hdate hopen
+		end
 	end
