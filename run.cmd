@@ -1,6 +1,6 @@
 setlocal
 
-SET MVN_LIB=C:\Users\cnguyen.MITEK\.m2\repository
+SET MVN_LIB=.m2\repository
 SET COMMONS_LANG=%MVN_LIB%\org\apache\commons\commons-lang3\3.0\commons-lang3-3.0.jar
 SET COMMONS_DB=%MVN_LIB%\commons-dbutils\commons-dbutils\1.5\commons-dbutils-1.5.jar
 SET COMMONS_IO=%MVN_LIB%\commons-io\commons-io\2.4\commons-io-2.4.jar

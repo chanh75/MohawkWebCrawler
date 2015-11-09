@@ -16,7 +16,7 @@ public class Main {
 	 */
 	private static class ParamContext {
 		
-		private boolean debug;
+	    private boolean debug;
 		private String scriptName;
 		private String constants;
 		private String cacheDir;
