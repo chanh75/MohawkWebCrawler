@@ -46,11 +46,15 @@ public class HasInSet_Operator implements BaseOperator {
             p1Val = ((Variable) p1).getValue();
         }
 
-        //System.out.println("varValue>> " + params[0] + ":" + varValue);
-
         if (p1Val instanceof String) {
-            String strValue = (String) p1Val; //System.out.println("hasInSet>> " + strValue);
-            Object[] set = (Object[]) p2;
+            String strValue = (String) p1Val;
+            Object[] set;
+            if (p2 instanceof String) {
+                set = new Object[] { p2 };
+            } else {
+                set = (Object[]) p2;
+            }
+
             for (Object s : set) {
                 if (strValue.indexOf((String) s) != -1) {
                     return true;
