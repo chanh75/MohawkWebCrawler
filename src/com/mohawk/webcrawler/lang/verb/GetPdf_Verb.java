@@ -49,7 +49,7 @@ public class GetPdf_Verb implements BaseVerb {
         if (dataDirectory != null) {
             cacheDirectory = dataDirectory + "webcrawler/cache";
         } else {
-            cacheDirectory = "C:\\Users\\cnguyen.MITEK\\Projects\\ProjectMohawk\\Scripts\\cache";
+            cacheDirectory = "C:\\Users\\cnguyen\\Projects\\ProjectMohawk\\Scripts\\cache";
         }
 
         Object param = LangCore.resolveParameter(pageContext, params[0]);

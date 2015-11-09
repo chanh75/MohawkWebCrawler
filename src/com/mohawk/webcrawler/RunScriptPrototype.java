@@ -258,7 +258,7 @@ public class RunScriptPrototype {
 
     public static void main(String[] args) {
 
-        String filename = "C:\\Users\\cnguyen.MITEK\\Projects\\ProjectMohawk\\Scripts\\university_hospital_rainbow_children_cleveland.txt";
+        String filename = "C:\\Users\\cnguyen\\Projects\\ProjectMohawk\\Scripts\\university_hospital_rainbow_children_cleveland.txt";
 
         try {
             RunScriptPrototype s = new RunScriptPrototype();

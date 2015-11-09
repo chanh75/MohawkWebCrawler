@@ -59,7 +59,7 @@ public class GetUrl_Verb implements BaseVerb {
         if (config.getCacheDirectory() != null) { // pull the HTML from cache
 
             String prefix = null; //pageContext.getConfig().getProviderId() + "_";
-            Collection<File> files = FileUtils.listFiles(new File("C:\\Users\\cnguyen.MITEK\\Projects\\ProjectMohawk\\Scripts\\cache"), null, false);
+            Collection<File> files = FileUtils.listFiles(new File("C:\\Users\\cnguyen\\Projects\\ProjectMohawk\\Scripts\\cache"), null, false);
 
             for (File file : files) {
                 if (file.getName().startsWith(prefix)) {
