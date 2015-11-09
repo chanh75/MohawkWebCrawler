@@ -1,7 +1,7 @@
 # Mohawk WebCrawler
-Mohawk WebCrawler is a imple scripting language to control web page and PDF data scraping.  PDF data scraping is down by transforming the PDF to a HTML code.
+Mohawk WebCrawler is a simple scripting language to control web page and PDF data scraping.  PDF data scraping is done by transforming the PDF to a HTML code.
 
-Here's an example of scraping Google stock data off of Yahoo Finance:
+Here's an example of scraping Google stock data from Yahoo Finance:
 	
 	/* declare variables */
 	var price
@@ -50,11 +50,11 @@ Here's an example of scraping Google stock data off of Yahoo Finance:
 		end
 	end
 
-### Requirements
+###Requirements
 
 - Java 1.7+
 - Maven 3.3+
 
-### Run Example
+###Run Example
 
-.\run.cmd
+Clone repository then execute "run.cmd"
