@@ -6,20 +6,20 @@ import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 
 public class ResetHead2_Verb implements BaseVerb {
 
-	@Override
-	public int numOfParams() {
-		return 0;
-	}
-	
-	@Override
-	public ReturnType returnType() {
-		return ReturnType.VOID;
-	}
-	
-	@Override
-	public Object run(ScriptContext pageContext, Object ... param) {
-		
-		pageContext.resetServiceHead2();
-		return null;
-	}
+    @Override
+    public int numOfParams() {
+        return 0;
+    }
+
+    @Override
+    public ReturnType returnType() {
+        return ReturnType.VOID;
+    }
+
+    @Override
+    public Object run(ScriptContext pageContext, Object ... param) {
+
+        pageContext.resetServiceHead2();
+        return null;
+    }
 }
