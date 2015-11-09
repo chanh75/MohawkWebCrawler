@@ -60,6 +60,10 @@ while (nextrow)
 	nextcol
 	gettext hdate
 	
+	if (hdate ~has "Close price adjusted for dividends and splits.")
+		break
+	end
+	
 	nextcol
 	gettext hopen
 	
