@@ -21,7 +21,7 @@ package com.mohawk.webcrawler.lang;
  * @author cnguyen
  *
  */
-public interface BaseOperator {
+public interface BaseOperator extends BaseToken {
 
     public enum OperReturnType {
         VOID,

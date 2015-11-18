@@ -22,7 +22,7 @@ package com.mohawk.webcrawler.lang;
  * @author cnguyen
  *
  */
-public interface BaseVerb {
+public interface BaseVerb extends BaseToken {
 
     public enum ReturnType {
         VOID,

@@ -46,13 +46,17 @@ public class Main {
             for (int i = 0; i < args.length; i++) {
                 if ("-d".equals(args[i])) {  // no database inserts/updates
                     this.debug = true;
-                } else if ("-p".equals(args[i])) { // batch number of scripts
+                }
+                else if ("-p".equals(args[i])) { // batch number of scripts
 
-                } else if ("-s".equals(args[i])) { // name of script
+                }
+                else if ("-s".equals(args[i])) { // name of script
                     this.scriptName = args[++i];
-                } else if ("-v".equals(args[i])) { // JSON list of constants/variables
+                }
+                else if ("-v".equals(args[i])) { // JSON list of constants/variables
                     this.constants = args[++i];
-                } else if ("-c".equals(args[i])) {
+                }
+                else if ("-c".equals(args[i])) {
                     this.cacheDir = args[++i];
                 }
             }
@@ -81,7 +85,7 @@ public class Main {
             String scriptFile = config.getScriptFilename();
 
             // compile the script
-            System.out.println("Compiling script>> " + scriptFile);
+            System.out.printf("Compiling script>> %s\n", scriptFile);
             LinkedList executable = ScriptCompiler.compile(scriptFile);
 
             // execute the script

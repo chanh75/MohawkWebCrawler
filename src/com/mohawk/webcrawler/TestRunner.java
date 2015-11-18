@@ -6,7 +6,7 @@ public class TestRunner {
 
         String[] params = {
             "-d",
-            "-s", "C:\\temp\\yahoo_finance_stocks.txt",// "c:\\temp\\test3.txt",
+            "-s", "C:\\temp\\yahoo_finance_stocks.txt",//,"c:\\temp\\test3.txt",
             "-v", "{SYMBOL:\"GOOG\"}"
         };
 

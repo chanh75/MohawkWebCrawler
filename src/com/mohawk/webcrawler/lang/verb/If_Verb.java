@@ -22,6 +22,12 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
+/**
+ * If verb for if-then tokens
+ *
+ * @author cnguyen
+ *
+ */
 public class If_Verb extends BaseConditionalVerb {
 
     private ArrayList<ElseIf_Verb> elseIfVerbs;

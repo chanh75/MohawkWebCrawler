@@ -26,7 +26,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 
+import com.mohawk.webcrawler.lang.BaseEndScope;
+import com.mohawk.webcrawler.lang.BaseLiteral;
+import com.mohawk.webcrawler.lang.BaseToken;
+import com.mohawk.webcrawler.lang.BaseVariable;
 import com.mohawk.webcrawler.lang.LangCore;
+import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.verb.ElseIf_Verb;
 import com.mohawk.webcrawler.lang.verb.Else_Verb;
 import com.mohawk.webcrawler.lang.verb.If_Verb;
@@ -42,7 +47,7 @@ public class ScriptCompiler {
      * @throws IOException
      * @throws Exception
      */
-    public static LinkedList compile(String filename) throws IOException, Exception {
+    public static LinkedList<BaseToken> compile(String filename) throws IOException, Exception {
 
         List<String> lines = FileUtils.readLines(new File(filename), "UTF-8");
         StringBuffer fileContents = new StringBuffer();
@@ -53,7 +58,7 @@ public class ScriptCompiler {
             fileContents.append(comment.remove(line)).append(' ');
         }
 
-        System.out.println("fileContents>> " + fileContents);
+        System.out.printf("fileContents %s", fileContents);
 
         // reorganize the tokens into scopes
         return compile0(fileContents.toString());
@@ -61,30 +66,31 @@ public class ScriptCompiler {
     }
 
     /**
+     * Parses out each token in the program, and then calls addScope.
      *
      * @param programText
      * @return
      * @throws CompilationException
      */
-    private static LinkedList compile0(String programText)
+    private static LinkedList<BaseToken> compile0(String programText)
     throws CompilationException {
 
         Pattern p = Pattern.compile("\"[^\"]+\"|\\([^\\)]+\\)|[^ \r\n]+");
         Matcher m = p.matcher(programText);
 
         ArrayList<String> tokensList = new ArrayList<String>();
-        while (m.find()) {
+        while (m.find())
             tokensList.add(m.group(0).trim());
-        }
 
         Queue<String> tokensQueue = new LinkedList<String>();
         for (String token : tokensList) {
-            if (token.trim().length() > 0) {
+            if (token.trim().length() > 0)
                 tokensQueue.add(token);
-            }
         }
 
-        LinkedList rootScope = new LinkedList(); // root scope
+     // root scope, wil contain both String and BaseVerb objects
+        LinkedList<BaseToken> rootScope = new LinkedList<BaseToken>();
+
         addScope(tokensQueue, rootScope);
 
         return rootScope;
@@ -95,32 +101,17 @@ public class ScriptCompiler {
      * @param tokens
      * @param parentScope
      */
-    private static void addScope(Queue<String> tokens, Queue parentScope)
+    private static void addScope(Queue<String> tokens, Queue<? super BaseToken> parentScope)
     throws CompilationException {
-
-        Queue queue = new LinkedList();
 
         while (!tokens.isEmpty()) {
 
-            Object token = tokens.poll();
-
-            if ("end".equals(token)) {
-
-                parentScope.add(token);
+            String token = tokens.poll();
+            if ("end".equals(token) || "else".equals(token) || "elseif".equals(token)) {
+                parentScope.add(new BaseEndScope(token));
                 break;
-
-            } else if ("else".equals(token)) {
-
-                parentScope.add(token);
-                break;
-
-            } else if ("elseif".equals(token)) {
-
-                parentScope.add(token);
-                break;
-
-            } else if ("if".equals(token)) {
-
+            }
+            else if ("if".equals(token)) {
                 String expression = tokens.poll();
 
                 If_Verb ifVerb = new If_Verb();
@@ -133,40 +124,36 @@ public class ScriptCompiler {
                 LinkedList ifScope = (LinkedList) ifVerb.getScope();
                 Object elseToken = ifScope.peekLast();
 
-                if (elseToken instanceof String &&
-                (elseToken.equals("elseif") || elseToken.equals("else"))) {
-
+                if (elseToken instanceof BaseEndScope) {
                     ifScope.pollLast(); // remove elseif or else from if scope
 
-                    while (elseToken instanceof String &&
-                    (elseToken.equals("elseif") || elseToken.equals("else"))) {
+                    while (elseToken instanceof BaseEndScope) {
 
-                        if (elseToken instanceof String) {
+                        String elseStr = ((BaseEndScope) elseToken).getName();
+                        if ("end".equals(elseStr))
+                            break;
+                        else if ("elseif".equals(elseStr)) {
 
-                            String elseStr = (String) elseToken;
-                            if ("elseif".equals(elseStr)) {
+                            String exp = tokens.poll();
+                            ElseIf_Verb elseIfVerb = new ElseIf_Verb();
+                            elseIfVerb.setExpression(exp);
+                            ifVerb.addElseIf(elseIfVerb);
 
-                                String exp = tokens.poll();
-                                ElseIf_Verb elseIfVerb = new ElseIf_Verb();
-                                elseIfVerb.setExpression(exp);
-                                ifVerb.addElseIf(elseIfVerb);
+                            addScope(tokens, elseIfVerb.createScope());
+                            elseToken = elseIfVerb.getScope().pollLast();
+                        }
+                        else if ("else".equals(elseStr)) {
 
-                                addScope(tokens, elseIfVerb.createScope());
-                                elseToken = elseIfVerb.getScope().pollLast();
+                            Else_Verb elseVerb = new Else_Verb();
+                            ifVerb.setElse(elseVerb);
 
-                            } else if ("else".equals(elseStr)) {
-
-                                Else_Verb elseVerb = new Else_Verb();
-                                ifVerb.setElse(elseVerb);
-
-                                addScope(tokens, elseVerb.createScope());
-                                elseToken = elseVerb.getScope().pollLast();
-
-                            }
+                            addScope(tokens, elseVerb.createScope());
+                            elseToken = elseVerb.getScope().pollLast();
                         }
                     }
                 }
-            } else if ("while".equals(token)) {
+            }
+            else if ("while".equals(token)) {
 
                 String evaluation = tokens.poll();
 
@@ -176,19 +163,34 @@ public class ScriptCompiler {
                 parentScope.add(whileVerb);
                 addScope(tokens, whileVerb);
 
-            } else if (LangCore.isVerb(token)){
-
+            }
+            else if (LangCore.isVerb(token)) { // verb
                 try {
                     parentScope.add(LangCore.createVerbObject((String) token));
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                     throw new CompilationException(e.getLocalizedMessage());
                 }
-
-            } else { // variable
-
-                parentScope.add(token);
             }
+            else if (LangCore.isLiteral(token)) {  // literal
+                try {
+                    parentScope.add(new BaseLiteral(LangCore.createLiteral(token)));
+                }
+                catch (LanguageException e) {
+                    throw new CompilationException(e.getLocalizedMessage());
+                }
+            }
+            else if (LangCore.isOperator(token)) { // operator
+                try {
+                    parentScope.add(LangCore.createOperatorObject(token));
+                }
+                catch (LanguageException e) {
+                    throw new CompilationException(e.getLocalizedMessage());
+                }
+            }
+            else // default to variable
+                parentScope.add(new BaseVariable(token));
         }
     }
 }

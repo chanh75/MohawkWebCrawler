@@ -99,24 +99,19 @@ public class LangCore {
      * @return
      * @throws LanguageException
      */
-    public static boolean evaluateExpression(ScriptContext scriptContext, String exp) throws LanguageException {
+    public static boolean evaluateExpression(ScriptContext scriptContext, String exp)
+            throws LanguageException {
 
-        if (!(exp.startsWith("(") && exp.endsWith(")"))) {
+        if (!(exp.startsWith("(") && exp.endsWith(")")))
             throw new LanguageException("Is not expression>> " + exp);
-        }
 
         // remove ()
         String exp0 = exp.substring(1, exp.length() - 1);
-
         LinkedList tokens = (new Tokenizer()).tokenize(exp0);
-        //System.out.println("tokens>> " + tokens);
-
         int index = 0;
 
         do {
             Object tokenObj = tokens.get(index);
-            //System.out.println("tokens>> [" + tokens + "]");
-            //System.out.println("token>> [" + tokenObj + "]");
 
             if (tokenObj instanceof Boolean) {
                 index++;
@@ -124,70 +119,69 @@ public class LangCore {
             }
 
             String token = (String) tokenObj;
-
             if (hasUnaryOperator(token)) { // operators ++ or --
-
                 String[] operation = parseUnaryOperator(token);
                 BaseOperator operatorObj = createOperatorObject(operation[0]);
                 try {
                     operatorObj.run(scriptContext, operation[1]);
-
                     tokens.remove(index);
                     tokens.add(index, operation[1]);
                     index++;
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                     throw new LanguageException(e.getLocalizedMessage());
                 }
-
-            } else if (isVerb(token)) { // invoke verb
+            }
+            else if (isVerb(token)) { // invoke verb
 
                 tokens.remove(index);
                 BaseVerb verbObject = createVerbObject(token);
 
-                if (verbObject.returnType() == ReturnType.VOID) {
+                if (verbObject.returnType() == ReturnType.VOID)
                     throw new LanguageException("Verb with void return cannot be in expression.");
-                }
 
                 int paramsRequired = verbObject.numOfParams();
-                if (paramsRequired == 0) {
+                if (paramsRequired == 0)
                     tokens.add(invokeVerb(verbObject, scriptContext));
-                } else if (paramsRequired > 0) {
+                else if (paramsRequired > 0) {
                     String[] params = new String[paramsRequired];
-                    for (int j = 0; j < paramsRequired; j++) {
+                    for (int j = 0; j < paramsRequired; j++)
                         params[j] = (String) tokens.remove(index + j);
-                    }
+
                     tokens.add(index, invokeVerb(verbObject, params, scriptContext));
                 }
                 index++;
-
-            } else if (isConditionalOperator(token)) {
+            }
+            else if (isConditionalOperator(token)) {
 
                 Boolean p1 = (Boolean) tokens.get(index - 1);
                 Object p2 = tokens.get(index + 1);
 
-                if (!(p2 instanceof Boolean)) {
+                if (!(p2 instanceof Boolean))
                     index++;
-                } else {
+                else {
                     try {
                         BaseOperator opObj = createOperatorObject(token);
                         Boolean result = (Boolean) opObj.run(scriptContext, p1, p2);
                         if (!result) {
                             return false;
-                        } else {
+                        }
+                        else {
                             tokens.remove(index - 1);
                             tokens.remove(index - 1);
                             tokens.remove(index - 1);
                             tokens.add(index - 1, result);
                         }
                         index++;
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                         throw new LanguageException(e.getLocalizedMessage());
                     }
                 }
-
-            } else if (isOperator(token)) {
+            }
+            else if (isOperator(token)) {
 
                 BaseOperator opObj = createOperatorObject(token);
                 Object[] params = new Object[2];
@@ -198,23 +192,21 @@ public class LangCore {
                     Boolean result = (Boolean) opObj.run(scriptContext, params);
                     tokens.add(index - 1, result);
                     index = 0; // reset
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                     throw new LanguageException(e.getLocalizedMessage());
                 }
-
-            } else if (isLiteral(token)) {
-
+            }
+            else if (isLiteral(token)) {
                 index++;
-
-            } else if (scriptContext.hasLocalVariable(token)) {
-
+            }
+            else if (scriptContext.hasLocalVariable(token)) {
                 index++;
-
-            } else {
+            }
+            else {
                 throw new LanguageException("Unable to resolve token '" + token + "' in expression>> " + exp);
             }
-
         } while (tokens.size() > 1);
 
         return (Boolean) tokens.remove();
@@ -230,35 +222,32 @@ public class LangCore {
     public static Object resolveParameter(ScriptContext scriptContext, Object param)
     throws LanguageException {
 
-        // if string literal, do variable injection
-        if (param instanceof String) {
-            String sparam = (String) param;
-
-            if (LangCore.isStringLiteral(sparam)) {
-
-                return LangCore.createStringLiteral(LangCore.injectVars(scriptContext, sparam));
-
-            } /*else if (LangCore.isConstant(sparam)) {
-
-                return LangCore.createConstant(pageContext, sparam);
-
-            */else if (LangCore.isLiteral(sparam)) {
-
-                return LangCore.createLiteral(sparam);
-
-            } else if (scriptContext.hasLocalVariable(sparam)) {
-
-                return scriptContext.getLocalVariable(sparam);
-            }
-        } else if (param instanceof Boolean) {
-            return param;
-        } else if (param instanceof Integer) {
-            return param;
-        } else if (param instanceof Double) {
-            return param;
-        } else if (param instanceof Variable) {
-            return param;
+        if (param instanceof BaseLiteral) {
+            Object value = ((BaseLiteral) param).getValue();
+            if (value instanceof String)
+                return LangCore.injectVars(scriptContext, (String) value);
+            else
+                return value;
         }
+        else if (param instanceof BaseVariable)
+            return scriptContext.getLocalVariable(((BaseVariable) param).getName());
+        else if (param instanceof String) { // if string literal, do variable injection
+            String sparam = (String) param;
+            if (LangCore.isStringLiteral(sparam))
+                return LangCore.createStringLiteral(LangCore.injectVars(scriptContext, sparam));
+            else if (LangCore.isLiteral(sparam))
+                return LangCore.createLiteral(sparam);
+            else if (scriptContext.hasLocalVariable(sparam))
+                return scriptContext.getLocalVariable(sparam);
+        }
+        else if (param instanceof Boolean)
+            return param;
+        else if (param instanceof Integer)
+            return param;
+        else if (param instanceof Double)
+            return param;
+        else if (param instanceof Variable)
+            return param;
 
         throw new LanguageException("Unable to resolve parameter>> " + param);
     }
@@ -283,13 +272,12 @@ public class LangCore {
      * @throws LanguageException
      */
     private static String[] parseUnaryOperator(String exp) throws LanguageException {
-        if (exp.startsWith("!")) {
+        if (exp.startsWith("!"))
             return new String[] { exp.substring(0, 1), exp.substring(1) };
-        } else if (exp.startsWith("++")) {
+        else if (exp.startsWith("++"))
             return new String[] { exp.substring(0, 2), exp.substring(2) };
-        }
-
-        throw new LanguageException("Unable to parse unary in expression>> " + exp);
+        else
+            throw new LanguageException("Unable to parse unary in expression>> " + exp);
     }
 
     /**
@@ -301,26 +289,25 @@ public class LangCore {
 
         if (object instanceof String) {
             String token = ((String) object).trim();
-            if (token.startsWith("\"") && token.endsWith("\"")) {
+            if (token.startsWith("\"") && token.endsWith("\""))
                 return true;
-            } else if ("true".equals(token) || "false".equals(token)) {
+            else if ("true".equals(token) || "false".equals(token))
                 return true;
-            } else if (token.startsWith("[") && token.endsWith("]")) {
+            else if (token.startsWith("[") && token.endsWith("]"))
                 return true;
-            } else {
+            else
                 return isNumberLiteral((String) token);
-            }
-        } else if (object instanceof Integer) {
+        }
+        else if (object instanceof Integer)
             return true;
-        } else if (object instanceof Boolean) {
+        else if (object instanceof Boolean)
             return true;
-        } else if (object instanceof Double) {
+        else if (object instanceof Double)
             return true;
         //} else if (object instanceof Object[]) {
         //	return true;
-        }
-
-        return false;
+        else
+            return false;
     }
 
     /**
@@ -334,53 +321,50 @@ public class LangCore {
         if (token instanceof String) {
 
             String s = ((String) token).replace("\r\n","").replace("\t", "").trim();
-
-            if (s.startsWith("\"") && s.endsWith("\"")) { // string
-
+            if (s.startsWith("\"") && s.endsWith("\"")) // string
                 return s.substring(1, s.length() - 1);
-
-            } else if ("true".equals(s) || "false".equals(s)) { // boolean
-
+            else if ("true".equals(s) || "false".equals(s)) // boolean
                 return new Boolean(s);
-
-            } else if (s.startsWith("[") && s.endsWith("]")) { // set
+            else if (s.startsWith("[") && s.endsWith("]")) { // set
 
                 Object[] tokens = s.substring(1, s.length() - 1).split(",");
                 int len = tokens.length;
                 Object[] ret = new Object[len];
-                for(int i = 0; i < len; i++) {
+                for(int i = 0; i < len; i++)
                     ret[i] = LangCore.createLiteral(tokens[i]);
-                }
-                return ret;
 
-            } else {
+                return ret;
+            }
+            else {
                 for (int i = 0; i < 2; i++) {
                     try {
-                        if (i == 0) {
+                        if (i == 0)
                             return new Integer((String) token);
-                        } else if (i == 1) {
+                        else if (i == 1)
                             return new Double((String) token);
-                        }
-                    } catch (Exception e) {
-                    }
+                    } catch (Exception e) { }
                 }
             }
-        } else if (token instanceof Number) {
-            return token;
         }
+        else if (token instanceof Number)
+            return token;
 
         throw new LanguageException("Unable to convert to literal value>> " + token);
     }
 
 
-
+    /**
+     *
+     * @param s
+     * @return
+     */
     private static boolean isStringLiteral(Object s) {
         if (s instanceof String) {
             String l = (String) s;
             return l.startsWith("\"") && l.endsWith("\"");
-        } else {
-            return false;
         }
+        else
+            return false;
     }
 
     /**
@@ -392,66 +376,26 @@ public class LangCore {
 
         for (int i = 0; i < 2; i++) {
             try {
-                if (i == 0) {
+                if (i == 0)
                     Integer.parseInt(s);
-                } else if (i == 1) {
+                else if (i == 1)
                     Double.parseDouble(s);
-                }
+
                 return true;
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { }
         }
         return false;
     }
 
     private static String createStringLiteral(Object param) {
         String p = param.toString();
-
         int s = p.indexOf("\"");
         int e = p.lastIndexOf("\"");
         return p.substring(s + 1, e);
     }
 
-    /**
-     *
-     * @param s
-     * @return
-     * @throws LanguageException
-     *
-    private static Number createNumberLiteral(Object s) throws LanguageException {
-        if (s instanceof Integer) {
-            return (Integer) s;
-        } else if (s instanceof Double) {
-            return (Double) s;
-        } else if (s instanceof String) {
-            try {
-                String sval = (String) s;
-                int i = Integer.parseInt(sval);
-                if (String.valueOf(i).equals(sval)) {
-                    return i;
-                }
-                double d = Double.parseDouble(sval);
-                if (String.valueOf(d).equals(sval)) {
-                    return d;
-                }
-            } catch (Exception e) {
-                //e.printStackTrace();
-            }
-        }
-        throw new LanguageException("Unable to make number literal from>> " + s);
-    }
-    */
-    /*
-    private static String createConstant(ScriptContext pageContext, String param)
-    throws LanguageException {
-        return (String) pageContext.getConfig().getConstant(LangCore.parseConstant(param));
-    }
-    */
-    private static String injectVars(ScriptContext c, String s) throws LanguageException {
 
-        if (!LangCore.isStringLiteral(s)) {
-            throw new LanguageException("Variable injection can only happen on string literals.");
-        }
+    private static String injectVars(ScriptContext c, String s) throws LanguageException {
 
         StringBuffer sb = new StringBuffer(s);
 
@@ -461,30 +405,27 @@ public class LangCore {
 
             if (s1 != -1) {
                 int s2 = sb.indexOf("}", s1 + 1);
-                if (s2 == -1) {
+                if (s2 == -1)
                     throw new LanguageException("Variable injection not closed with '}'");
-                }
 
                 String var = sb.substring(s1 + 1, s2);
                 Object value = null;
                 if ("#CURSOR".equals(var)) {
                     int pos = c.getCursorPosition();
                     value = c.getDocumentHtml().substring(pos, pos + 200);
-                } else {
+                }
+                else {
                     Variable varObj = c.getLocalVariable(var);
-                    if (varObj != null) {
+                    if (varObj != null)
                         value = varObj.getValue();
-                    }
                 }
 
-                if (value == null) {
+                if (value == null)
                     sb.replace(s1, s2 + 1, "null");
-                } else if (value instanceof Object[]) {
+                else if (value instanceof Object[])
                     sb.replace(s1, s2 + 1, Arrays.toString((Object[]) value));
-                } else {
+                else
                     sb.replace(s1, s2 + 1, String.valueOf(value));
-                }
-
             }
         } while (s1 != -1);
 
@@ -492,11 +433,10 @@ public class LangCore {
     }
 
     public static boolean isVerb(Object s) {
-        if (s instanceof String) {
+        if (s instanceof String)
             return VERB_CLASS_MAP.containsKey((String) s);
-        } else {
+        else
             return false;
-        }
     }
 
     private static String resolveVerbSimpleClassName(String simpleName) {
@@ -512,7 +452,8 @@ public class LangCore {
         try {
             BaseVerb verbObj = createVerbObject(verbName);
             return verbObj.run(context, null);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new LanguageException(e.getLocalizedMessage());
         }
@@ -522,7 +463,8 @@ public class LangCore {
     throws LanguageException {
         try {
             return verbObj.run(context, null);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new LanguageException(e.getLocalizedMessage());
         }
@@ -532,7 +474,8 @@ public class LangCore {
     throws LanguageException {
         try {
             return verbObj.run(context, params);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new LanguageException(e.getLocalizedMessage());
         }
@@ -541,11 +484,12 @@ public class LangCore {
     public static BaseVerb createVerbObject(String verbName) throws LanguageException {
         try {
             String fullClassName = resolveVerbSimpleClassName(verbName);
-            if (fullClassName == null) {
+            if (fullClassName == null)
                 throw new LanguageException("Verb not found>> " + verbName);
-            }
+
             return (BaseVerb) Class.forName(fullClassName).newInstance();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new LanguageException(e.getLocalizedMessage());
         }
@@ -554,11 +498,12 @@ public class LangCore {
     public static BaseOperator createOperatorObject(String operator) throws LanguageException {
         try {
             String fullClassName = resolveOperatorSimpleClassName(operator);
-            if (fullClassName == null) {
+            if (fullClassName == null)
                 throw new LanguageException("Operator not found>> " + operator);
-            }
+
             return (BaseOperator) Class.forName(fullClassName).newInstance();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw new LanguageException(e.getLocalizedMessage());
         }
@@ -577,19 +522,18 @@ public class LangCore {
         int len = tokens.size();
         for (int i = 0; i < len; i++) {
             String token = tokens.get(i);
-
             if ("&&".equals(token) || "||".equals(token)) {
                 linkedList.add(subExpTokens);
                 linkedList.add(token);
                 subExpTokens = new ArrayList<String>();
-            } else {
-                subExpTokens.add(token);
             }
+            else
+                subExpTokens.add(token);
         }
 
-        if (subExpTokens.size() > 0) {
+        if (subExpTokens.size() > 0)
             linkedList.add(subExpTokens);
-        }
+
         return linkedList;
     }
 }

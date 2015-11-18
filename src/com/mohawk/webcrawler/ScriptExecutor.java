@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.mohawk.webcrawler.lang.BaseConditionalVerb;
+import com.mohawk.webcrawler.lang.BaseEndScope;
 import com.mohawk.webcrawler.lang.BaseLoopVerb;
 import com.mohawk.webcrawler.lang.BaseOperator;
+import com.mohawk.webcrawler.lang.BaseToken;
+import com.mohawk.webcrawler.lang.BaseVariable;
 import com.mohawk.webcrawler.lang.BaseVerb;
 import com.mohawk.webcrawler.lang.BreakException;
 import com.mohawk.webcrawler.lang.ExitException;
@@ -59,35 +62,28 @@ public class ScriptExecutor {
      * @throws IOException
      * @throws Exception
      */
-    private static void exec0(ScriptContext pageContext, LinkedList executable)
+    private static void exec0(ScriptContext pageContext, LinkedList<? super BaseToken> executable)
     throws IOException, Exception {
 
         int len = executable.size();
 
         for (int i = 0; i < len; i++) {
-
             Object token = executable.get(i);
-
-            if (token instanceof String && ((String) token).equals("end")) {
-
+            if (token instanceof BaseEndScope)
                 return;
-
-            } else if (token instanceof BaseLoopVerb) { // while loop
+            else if (token instanceof BaseLoopVerb) { // while loop
 
                 BaseLoopVerb loop = (BaseLoopVerb) token;
                 loop.setPageContext(pageContext);
-
                 try {
-                    while (loop.shouldLoop()) {
+                    while (loop.shouldLoop())
                         exec0(pageContext, loop);
-                    }
-                } catch (BreakException e) {
                 }
-
-            } else if (token instanceof BaseConditionalVerb) { // if-then-else
+                catch (BreakException e) { }
+            }
+            else if (token instanceof BaseConditionalVerb) { // if-then-else
 
                 If_Verb conditionVerb = (If_Verb) token;
-
                 if (conditionVerb.shouldRunIf(pageContext)) {
                     exec0(pageContext, conditionVerb.getScope());
                     continue;
@@ -104,46 +100,41 @@ public class ScriptExecutor {
                         }
                     }
                 }
-                if (runElse && conditionVerb.hasElse()) {
+                if (runElse && conditionVerb.hasElse())
                     exec0(pageContext, conditionVerb.getElseVerb().getScope());
-                }
-
-            } else if (token instanceof BaseVerb) {
+            }
+            else if (token instanceof BaseVerb) {
 
                 BaseVerb verbObj = (BaseVerb) token;
                 int numOfParams = verbObj.numOfParams();
                 Object[] params = new Object[numOfParams];
 
-                for (int p = 0; p < numOfParams; p++) {
+                for (int p = 0; p < numOfParams; p++)
                     params[p] = executable.get(++i);
-                }
 
                 verbObj.run(pageContext, params);
+            }
+            else if (token instanceof BaseVariable &&
+                    pageContext.hasLocalVariable(((BaseVariable) token).getName())) { // variable
 
-            } else if (token instanceof String && pageContext.hasLocalVariable((String) token)) { // variable
+                String tokenStr = ((BaseVariable) token).getName();
+                Object object = executable.get(++i);
+                if (!(object instanceof BaseOperator))
+                    throw new LanguageException("Variables [" + tokenStr + "] must be followed by an operator>> " + object);
 
-                String tokenStr = (String) token;
-
-                String operator = (String) executable.get(++i);
-                if (!LangCore.isOperator(operator)) {
-                    throw new LanguageException("Variables [" + tokenStr + "] must be followed by an operator>> " + operator);
-                }
-
-                BaseOperator operObj = LangCore.createOperatorObject(operator);
+                BaseOperator operObj = (BaseOperator) object;
 
                 int numOfParams = operObj.numOfParams();
                 Object[] params = new Object[numOfParams];
                 params[0] = pageContext.getLocalVariable(tokenStr);
 
-                for (int p = 1; p < numOfParams; p++) {
-                    params[p] = (String) executable.get(++i);
-                }
+                for (int p = 1; p < numOfParams; p++)
+                    params[p] = executable.get(++i);
 
                 operObj.run(pageContext, params);
-
-            } else {
-                throw new LanguageException("Undefined code logic for token>> " + token);
             }
+            else
+                throw new LanguageException("Undefined code logic for token>> " + token);
         }
     }
 }

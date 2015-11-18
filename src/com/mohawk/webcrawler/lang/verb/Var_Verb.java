@@ -15,10 +15,9 @@
  */
 package com.mohawk.webcrawler.lang.verb;
 
+import com.mohawk.webcrawler.lang.BaseVariable;
 import com.mohawk.webcrawler.lang.BaseVerb;
-import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.ScriptContext;
-import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 
 public class Var_Verb implements BaseVerb {
 
@@ -35,14 +34,16 @@ public class Var_Verb implements BaseVerb {
     @Override
     public Object run(ScriptContext pageContext, Object ... params) throws Exception {
 
-        String variableName = (String) params[0];
-        if (LangCore.isVerb(variableName)) {
-            throw new Exception("Variable name is a reserved verb.");
-        }
+//        String variableName = (String) params[0];
+//        if (LangCore.isVerb(variableName)) {
+//            throw new Exception("Variable name is a reserved verb.");
+//        }
 
-        //System.out.println("Defining local variable>> " + variableName);
-        pageContext.defineLocalVariable(variableName);
+        if (!(params[0] instanceof BaseVariable))
+            throw new Exception("var error: first parameter must be a variable name>> " + params[0]);
 
+        String varName = ((BaseVariable) params[0]).getName();
+        pageContext.defineLocalVariable(varName);
         return null;
     }
 }

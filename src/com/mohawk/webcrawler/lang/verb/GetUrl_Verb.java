@@ -47,9 +47,8 @@ public class GetUrl_Verb implements BaseVerb {
         Object p1 = LangCore.resolveParameter(pageContext, params[0]);
         //System.out.println("GetUrl param>> " + p1);
 
-        if (!(p1 instanceof String)) {
+        if (!(p1 instanceof String))
             throw new LanguageException("String literal required as parameter>> " + p1);
-        }
 
         String url = (String) p1;
         Document doc = null;
