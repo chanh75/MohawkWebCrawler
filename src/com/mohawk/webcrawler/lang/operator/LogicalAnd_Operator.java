@@ -36,15 +36,14 @@ public class LogicalAnd_Operator implements BaseOperator {
     public Object run(ScriptContext pageContext, Object... params) throws LanguageException {
 
         Object p1Val = LangCore.resolveParameter(pageContext, params[0]);
-        if (!(Boolean) p1Val) {
+        if (!(Boolean) p1Val)
             return false;
-        }
 
         if (params.length > 1) {
             Object p2Val = LangCore.resolveParameter(pageContext, params[1]);
             return (Boolean) p1Val && (Boolean) p2Val;
-        } else {
-            return p1Val;
         }
+        else
+            return p1Val;
     }
 }

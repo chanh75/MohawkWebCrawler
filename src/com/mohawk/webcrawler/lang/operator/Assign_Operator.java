@@ -33,13 +33,10 @@ public class Assign_Operator implements BaseOperator {
     }
 
     @Override
-    public Object run(ScriptContext pageContext, Object... params)
-    throws Exception {
+    public Object run(ScriptContext pageContext, Object... params) throws Exception {
 
-        //Object p1 = LangCore.resolveParameter(pageContext, params[0]);
         String varName = ((Variable) params[0]).getName();
         Object value = LangCore.resolveParameter(pageContext, params[1]);
-
         pageContext.setLocalVariable(varName, value);
 
         return null;

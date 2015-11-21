@@ -38,13 +38,6 @@ public class Else_Verb extends BaseConditionalVerb {
 
     @Override
     public boolean shouldRunIf(ScriptContext pageContext) throws LanguageException {
-
-        //String eval = getExpression();
-        //System.out.println("IfVerb eval>> " + eval);
-
-        //boolean result = LangCore.evaluateExpression(pageContext, eval);
-        //System.out.println("IfVerb >> " + result + ", " + eval);
-
         return true;
     }
 }

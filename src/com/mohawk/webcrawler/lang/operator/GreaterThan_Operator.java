@@ -43,15 +43,13 @@ public class GreaterThan_Operator implements BaseOperator {
         Object p1Val = (p1 instanceof Variable) ? ((Variable) p1).getValue() : p1;
         Object p2Val = (p2 instanceof Variable) ? ((Variable) p2).getValue() : p2;
 
-
-        if (p1Val instanceof Integer && p2Val instanceof Integer) {
+        if (p1Val instanceof Integer && p2Val instanceof Integer)
             return (Integer) p1Val > (Integer) p2Val;
-        } else if (p1Val instanceof Double && p2Val instanceof Double) {
+        else if (p1Val instanceof Double && p2Val instanceof Double)
             return (Double) p1Val > (Double) p2Val;
-        } else if (p1Val instanceof String && p2Val instanceof String) {
+        else if (p1Val instanceof String && p2Val instanceof String)
             return ((String) p1Val).compareTo((String) p2Val) > 0;
-        } else {
+        else
             throw new LanguageException("Unable to run greater than operator on values>> " + p1Val + ":" + p2Val);
-        }
     }
 }

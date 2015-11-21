@@ -1,14 +1,14 @@
 package com.mohawk.webcrawler.lang;
 
-public class BaseLiteral implements BaseToken {
+public class BaseLiteral<T> implements BaseToken {
 
-    private Object value;
+    private T value;
 
-    public BaseLiteral(Object val) {
+    public BaseLiteral(T val) {
         this.value = val;
     }
 
-    public Object getValue() {
+    public T getValue() {
         return this.value;
     }
 }

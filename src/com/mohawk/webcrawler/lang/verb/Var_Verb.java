@@ -34,11 +34,6 @@ public class Var_Verb implements BaseVerb {
     @Override
     public Object run(ScriptContext pageContext, Object ... params) throws Exception {
 
-//        String variableName = (String) params[0];
-//        if (LangCore.isVerb(variableName)) {
-//            throw new Exception("Variable name is a reserved verb.");
-//        }
-
         if (!(params[0] instanceof BaseVariable))
             throw new Exception("var error: first parameter must be a variable name>> " + params[0]);
 

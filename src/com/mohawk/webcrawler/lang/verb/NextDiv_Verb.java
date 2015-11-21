@@ -35,13 +35,10 @@ public class NextDiv_Verb implements BaseVerb {
             throws Exception {
 
         int index = pageContext.indexOfTagFromCurrent("<div>");
-        if (index == -1) {
+        if (index == -1)
             return false;
-        } else {
-
-            String html = pageContext.getDocumentHtml();
-            //System.out.println("html>> " + html.substring(index, index + 30));
-
+        else {
+            //String html = pageContext.getDocumentHtml();
             pageContext.setCursorPosition(index);
             return true;
         }

@@ -38,9 +38,8 @@ public class GoText_Verb implements BaseVerb {
 
         Object p1 = LangCore.resolveParameter(pageContext, params[0]);
 
-        if (!(p1 instanceof String)) {
+        if (!(p1 instanceof String))
             throw new LanguageException("String literal parameter required for GoText verb>> " + p1);
-        }
 
         String text = (String) p1;
 
@@ -52,16 +51,16 @@ public class GoText_Verb implements BaseVerb {
                 svgContext.setCursorPosition(foundPos);
                 i = svgContext.getPositionInDocument() + foundPos;
             }
-        } else {
-            i = pageContext.indexOfText(text);
         }
+        else
+            i = pageContext.indexOfText(text);
 
-        if (i == -1) {
+        if (i == -1)
             throw new Exception("Unable to find text within html document>> [" + text + "]");
-            //return false;
-        } else {
+        else {
             pageContext.setCursorPosition(i);
             return true;
         }
+
     }
 }

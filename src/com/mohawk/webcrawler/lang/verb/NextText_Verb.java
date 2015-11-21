@@ -37,16 +37,12 @@ public class NextText_Verb implements BaseVerb {
             throws Exception {
 
         Object p1 = LangCore.resolveParameter(scriptContext, params[0]);
-
-        if (!(p1 instanceof String)) {
+        if (!(p1 instanceof String))
             throw new LanguageException("Parameter must be a string literal>> " + p1);
-        }
 
         int i = scriptContext.indexOfTextFromCurrent((String) p1);
-        if (i == -1) {
-            //throw new NotFoundException("Unable to find tag <h3>");
+        if (i == -1)
             return false;
-        }
 
         scriptContext.setCursorPosition(i);
         return true;

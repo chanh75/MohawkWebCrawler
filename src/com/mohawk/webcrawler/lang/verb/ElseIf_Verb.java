@@ -41,9 +41,6 @@ public class ElseIf_Verb extends BaseConditionalVerb {
     public boolean shouldRunIf(ScriptContext pageContext) throws LanguageException {
 
         String eval = getExpression();
-        boolean result = LangCore.evaluateExpression(pageContext, eval);
-        //System.out.println("IfVerb >> " + result + ", " + eval);
-
-        return result;
+        return LangCore.evaluateExpression(pageContext, eval);
     }
 }

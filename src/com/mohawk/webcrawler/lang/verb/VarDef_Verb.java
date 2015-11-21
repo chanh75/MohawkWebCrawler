@@ -54,7 +54,6 @@ public class VarDef_Verb implements BaseVerb {
 
         pageContext.defineLocalVariable(varName);
         pageContext.setLocalVariable(varName, /*LangCore.createLiteral(value)*/value);
-
         return null;
     }
 }

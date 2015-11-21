@@ -45,7 +45,6 @@ public class GetUrl_Verb implements BaseVerb {
     public Object run(ScriptContext pageContext, Object ... params) throws Exception {
 
         Object p1 = LangCore.resolveParameter(pageContext, params[0]);
-        //System.out.println("GetUrl param>> " + p1);
 
         if (!(p1 instanceof String))
             throw new LanguageException("String literal required as parameter>> " + p1);
@@ -56,7 +55,6 @@ public class GetUrl_Verb implements BaseVerb {
         Config config = pageContext.getConfig();
 
         if (config.getCacheDirectory() != null) { // pull the HTML from cache
-
             String prefix = null; //pageContext.getConfig().getProviderId() + "_";
             Collection<File> files = FileUtils.listFiles(new File("C:\\Users\\cnguyen\\Projects\\ProjectMohawk\\Scripts\\cache"), null, false);
 
@@ -66,21 +64,17 @@ public class GetUrl_Verb implements BaseVerb {
                     break;
                 }
             }
-
-        } else {
+        }
+        else {
             int MINS_2 = 2 * 60 * 1000;
             doc = (Document) Jsoup.parse(new URL(url), MINS_2);
         }
 
         // clear out any other contexts
         pageContext.setTableContext(null);
-
         pageContext.setDocument(doc);
         pageContext.setDocumentHtml(doc.html());
         pageContext.setCursorPosition(0);
-
-        //System.out.println("doc length>> " + doc.html());
-
         return null;
 
     }

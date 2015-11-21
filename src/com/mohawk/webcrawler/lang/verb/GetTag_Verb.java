@@ -40,22 +40,18 @@ public class GetTag_Verb implements BaseVerb {
 
         Object p1 = LangCore.resolveParameter(pageContext, params[0]);
 
-        if (!(p1 instanceof Variable)) {
+        if (!(p1 instanceof Variable))
             throw new LanguageException("Variable expected as parameter>> " + params[0]);
-        }
+
         Variable var = (Variable) p1;
 
         String html = pageContext.getDocumentHtml();
         int curPos = pageContext.getCursorPosition();
-        //System.out.println("GetTag html>> " + html.substring(curPos, curPos + 30));
 
-        if (!HtmlUtils.startsWithTag(html, curPos)) {
+        if (!HtmlUtils.startsWithTag(html, curPos))
             throw new NotSetException("Current position in document is not a tag.");
-        }
 
         String rawTagText = HtmlUtils.getTagBodyAtPosition(html, curPos);
-        //System.out.println("GetTag raw>> " + rawTagText);
-
         pageContext.setLocalVariable(var.getName(), rawTagText);
 
         return null;

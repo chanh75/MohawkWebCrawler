@@ -36,9 +36,7 @@ public class Print_Verb implements BaseVerb {
     public Object run(ScriptContext scriptContext, Object ... params) throws Exception {
 
         Object p1 = LangCore.resolveParameter(scriptContext, params[0]);
-
         System.out.println("Print: " + String.valueOf(p1));
-
         return null;
     }
 }

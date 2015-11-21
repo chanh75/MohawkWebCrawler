@@ -39,35 +39,26 @@ public class NextTable_Verb implements BaseVerb {
 
         String documentHtml = pageContext.getDocumentHtml();
         int curPos = pageContext.getCursorPosition();
-        //System.out.println("next table>> " + documentHtml.substring(curPos, curPos + 30));
 
         if (HtmlUtils.startsWithTag(documentHtml, "<table>", curPos)) {
             String endTag = "</table>";
             int endPos = documentHtml.indexOf(endTag, curPos + 7);
-            if (endPos != -1) {
+            if (endPos != -1)
                 curPos = endPos + 8;
-            }
         }
 
         int start = HtmlUtils.indexOfStartTag(documentHtml, "<table>", curPos);
-
-        if (start == -1) {
-            //throw new NotFoundException("<table> not found after the current cursor position.");
+        if (start == -1)
             return false;
-        }
 
         int end = documentHtml.indexOf("</table>", start);
-        if (end == -1) {
+        if (end == -1)
             throw new NotFoundException("</table> not found at current cursor position.");
-        }
+
         String tableHtml = documentHtml.substring(start, end + "</table>".length());
 
         pageContext.setCursorPosition(start);
         pageContext.setTableContext(new TableContext(tableHtml, start));
-        /*
-        int s = pageContext.getCursorPosition();
-        System.out.println("Nexttable check>> " + documentHtml.substring(s, s + 100));
-        */
         return true;
     }
 }

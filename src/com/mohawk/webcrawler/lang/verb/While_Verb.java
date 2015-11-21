@@ -38,17 +38,11 @@ public class While_Verb extends BaseLoopVerb {
 
         String eval = getExpression();
         ScriptContext pageContext = getPageContext();
-        //System.out.println("shouldLoop eval>> " + eval);
-
         boolean result = LangCore.evaluateExpression(pageContext, eval);
-        //System.out.println("result>> " + result);
-
         return result;
-
     }
 
     public Object run(ScriptContext pageCursor, Object ... param) {
-
         return null;
     }
 }

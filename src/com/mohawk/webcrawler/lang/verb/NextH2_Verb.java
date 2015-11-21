@@ -35,10 +35,8 @@ public class NextH2_Verb implements BaseVerb {
             throws Exception {
 
         int i = pageContext.indexOfTagFromCurrent("<h2>");
-        if (i == -1) {
-            //throw new NotFoundException("Unable to find tag <h3>");
+        if (i == -1)
             return false;
-        }
 
         pageContext.setCursorPosition(i);
         return true;

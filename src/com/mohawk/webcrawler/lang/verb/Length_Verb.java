@@ -36,25 +36,21 @@ public class Length_Verb implements BaseVerb {
     @Override
     public Object run(ScriptContext pageContext, Object ... params) throws Exception {
 
-        //System.out.println("..Run Length..");
-
         Object p1 = LangCore.resolveParameter(pageContext, params[0]);
         Object p1Val = null;
 
-        if (p1 instanceof Variable) {
+        if (p1 instanceof Variable)
             p1Val = ((Variable) p1).getValue();
-        } else if (p1 instanceof String) {
+        else if (p1 instanceof String)
             p1Val = (String) p1;
-        } else if (p1 instanceof String[]) {
+        else if (p1 instanceof String[])
             p1Val = (String[]) p1;
-        }
 
-        if (p1Val instanceof String) {
+        if (p1Val instanceof String)
             return ((String) p1Val).length();
-        } else if (p1Val instanceof String[]) {
+        else if (p1Val instanceof String[])
             return ((String[]) p1Val).length;
-        }
-
-        throw new LanguageException("Unable to determine length of object>> " + params[0]);
+        else
+            throw new LanguageException("Unable to determine length of object>> " + params[0]);
     }
 }

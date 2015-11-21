@@ -52,15 +52,13 @@ public class If_Verb extends BaseConditionalVerb {
     public boolean shouldRunIf(ScriptContext pageContext) throws LanguageException {
 
         String eval = getExpression();
-        boolean result = LangCore.evaluateExpression(pageContext, eval);
-
-        return result;
+        return LangCore.evaluateExpression(pageContext, eval);
     }
 
     public void addElseIf(ElseIf_Verb verb) {
-        if (this.elseIfVerbs == null) {
-            this.elseIfVerbs = new ArrayList<ElseIf_Verb>();
-        }
+        if (this.elseIfVerbs == null)
+            this.elseIfVerbs = new ArrayList<>();
+
         this.elseIfVerbs.add(verb);
     }
 

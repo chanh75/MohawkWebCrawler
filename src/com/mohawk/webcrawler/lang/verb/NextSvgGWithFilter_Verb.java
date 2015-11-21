@@ -52,9 +52,9 @@ public class NextSvgGWithFilter_Verb implements BaseVerb {
             String endTag = "</" + startTag + '>';
             int endTagPos = svgHtml.indexOf(endTag, curPos + 2);
             svgStartPos = endTagPos + endTag.length();
-        } else {
-            svgStartPos = curPos;
         }
+        else
+            svgStartPos = curPos;
 
 
         do {

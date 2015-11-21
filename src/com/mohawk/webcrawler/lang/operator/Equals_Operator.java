@@ -25,13 +25,11 @@ public class Equals_Operator implements BaseOperator {
 
     @Override
     public int numOfParams() {
-        // TODO Auto-generated method stub
         return 2;
     }
 
     @Override
     public OperReturnType returnType() {
-        // TODO Auto-generated method stub
         return OperReturnType.BOOLEAN;
     }
 
@@ -44,23 +42,20 @@ public class Equals_Operator implements BaseOperator {
         Object p1Val = null;
         Object p2Val = null;
 
-        if (p1 instanceof Variable) {
+        if (p1 instanceof Variable)
             p1Val = ((Variable) p1).getValue();
-        } else {
+        else
             p1Val = p1;
-        }
 
-        if (p2 instanceof Variable) {
+        if (p2 instanceof Variable)
             p2Val = ((Variable) p2).getValue();
-        } else {
+        else
             p2Val = p2;
-        }
 
-        if (p1Val instanceof String && p2Val instanceof String) {
+        if (p1Val instanceof String && p2Val instanceof String)
             return ((String) p1Val).equals((String) p2Val);
-        } else if (p1Val instanceof Integer && p2Val instanceof Integer) {
+        else if (p1Val instanceof Integer && p2Val instanceof Integer)
             return ((Integer) p1Val).intValue() == ((Integer) p2Val).intValue();
-        }
 
         throw new LanguageException("Unable to evaluate == on: " + p1 + ":" + p2);
     }

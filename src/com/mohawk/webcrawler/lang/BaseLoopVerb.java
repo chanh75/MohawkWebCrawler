@@ -24,7 +24,7 @@ import java.util.Queue;
  * @author cnguyen
  *
  */
-public abstract class BaseLoopVerb extends LinkedList implements BaseVerb {
+public abstract class BaseLoopVerb<T> extends LinkedList<T> implements BaseVerb {
 
     private String _expression = null;
     private ScriptContext _scriptContext = null;

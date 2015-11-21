@@ -54,9 +54,8 @@ public class ScriptCompiler {
 
         CommentRemover comment = new CommentRemover();
 
-        for (String line : lines) {
+        for (String line : lines)
             fileContents.append(comment.remove(line)).append(' ');
-        }
 
         System.out.printf("fileContents %s", fileContents);
 
@@ -78,18 +77,18 @@ public class ScriptCompiler {
         Pattern p = Pattern.compile("\"[^\"]+\"|\\([^\\)]+\\)|[^ \r\n]+");
         Matcher m = p.matcher(programText);
 
-        ArrayList<String> tokensList = new ArrayList<String>();
+        ArrayList<String> tokensList = new ArrayList<>();
         while (m.find())
             tokensList.add(m.group(0).trim());
 
-        Queue<String> tokensQueue = new LinkedList<String>();
+        Queue<String> tokensQueue = new LinkedList<>();
         for (String token : tokensList) {
             if (token.trim().length() > 0)
                 tokensQueue.add(token);
         }
 
      // root scope, wil contain both String and BaseVerb objects
-        LinkedList<BaseToken> rootScope = new LinkedList<BaseToken>();
+        LinkedList<BaseToken> rootScope = new LinkedList<>();
 
         addScope(tokensQueue, rootScope);
 
@@ -121,11 +120,12 @@ public class ScriptCompiler {
                 addScope(tokens, ifVerb.createScope());
 
                 // check if elseif or else is defined
-                LinkedList ifScope = (LinkedList) ifVerb.getScope();
+                LinkedList<BaseToken> ifScope = ifVerb.getScope();
                 Object elseToken = ifScope.peekLast();
 
                 if (elseToken instanceof BaseEndScope) {
-                    ifScope.pollLast(); // remove elseif or else from if scope
+                 // remove elseif or else from if scope
+                    ifScope.pollLast();
 
                     while (elseToken instanceof BaseEndScope) {
 

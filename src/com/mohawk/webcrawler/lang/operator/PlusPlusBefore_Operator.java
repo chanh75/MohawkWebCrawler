@@ -38,16 +38,15 @@ public class PlusPlusBefore_Operator implements BaseOperator {
             throws Exception {
 
         Object p = LangCore.resolveParameter(pageContext, params[0]);
-        //Object pVal = (p instanceof Variable) ? ((Variable) p).getValue() : p;
 
         if (p instanceof Variable) {
-
             Variable pVar = (Variable) p;
             Object val = ((Variable) p).getValue();
+
             if (val instanceof Integer) {
                 int intVal = ((Integer) val) + 1;
                 pageContext.setLocalVariable(pVar.getName(), intVal);
-                return intVal;
+                return null;
             }
         }
 

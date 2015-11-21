@@ -38,34 +38,27 @@ public class SvgXMax_Verb implements BaseVerb {
     @Override
     public Object run(ScriptContext pageContext, Object ... params) throws Exception {
 
-        //String variable = (String) params[0];
-        //String html = (String) pageContext.getLocalVariable(variable);
         Object p1 = LangCore.resolveParameter(pageContext, params[0]);
         String html = null;
 
-        if (p1 instanceof Variable) {
+        if (p1 instanceof Variable)
             html = String.valueOf(((Variable) p1).getValue());
-        } else if (p1 instanceof String) {
+        else if (p1 instanceof String)
             html = (String) p1;
-        }
 
         // parse the x attribute
         final String REGEX = "x=\"(.+?)?\"";
 
         Pattern p = Pattern.compile(REGEX);
         Matcher m = p.matcher(html);
+
         if (m.find()) {
-
             String xvalues = m.group(1);
-
             String[] array = xvalues.split(" ");
             //System.out.println("SvgXMax max value>> " + array[array.length - 1]);
             return new Double(array[array.length - 1]);
-
-        } else {
-
-            return -1d;
         }
-
+        else
+            return -1d;
     }
 }

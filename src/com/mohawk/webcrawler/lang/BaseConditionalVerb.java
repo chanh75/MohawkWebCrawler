@@ -26,7 +26,7 @@ import java.util.LinkedList;
 public abstract class BaseConditionalVerb implements BaseVerb {
 
     private String expression;
-    private LinkedList scope;
+    private LinkedList<BaseToken> scope;
 
     public abstract boolean shouldRunIf(ScriptContext scriptContext) throws LanguageException;
 
@@ -38,12 +38,12 @@ public abstract class BaseConditionalVerb implements BaseVerb {
         return this.expression;
     }
 
-    public LinkedList createScope() {
-        this.scope = new LinkedList();
+    public LinkedList<BaseToken> createScope() {
+        this.scope = new LinkedList<>();
         return this.scope;
     }
 
-    public LinkedList getScope() {
+    public LinkedList<BaseToken> getScope() {
         return this.scope;
     }
 

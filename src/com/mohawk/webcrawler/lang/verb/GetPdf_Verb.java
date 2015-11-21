@@ -46,17 +46,15 @@ public class GetPdf_Verb implements BaseVerb {
         String dataDirectory  = System.getenv("OPENSHIFT_DATA_DIR");
         String cacheDirectory = null;
 
-        if (dataDirectory != null) {
+        if (dataDirectory != null)
             cacheDirectory = dataDirectory + "webcrawler/cache";
-        } else {
+        else
             cacheDirectory = "C:\\Users\\cnguyen\\Projects\\ProjectMohawk\\Scripts\\cache";
-        }
 
         Object param = LangCore.resolveParameter(pageContext, params[0]);
 
         Document doc = null;
         Config config = pageContext.getConfig();
-        //System.out.println("sourcetype>> " + config.getSourceType());
 
         if (config.getCacheDirectory() != null) { // pull the HTML from cache
 
@@ -71,18 +69,16 @@ public class GetPdf_Verb implements BaseVerb {
                 }
             }
 
-            if (doc == null) {
+            if (doc == null)
                 throw new Exception("Unable to find cached file for script>> " + config.getScriptFilename());
-            }
-        } else {
-
+        }
+        else {
             // get it from the web
             System.out.println("URL>> " + param);
         }
 
         // clear out any other contexts
         pageContext.setTableContext(null);
-
         pageContext.setDocument(doc);
         pageContext.setDocumentHtml(doc.html());
         pageContext.setCursorPosition(0);

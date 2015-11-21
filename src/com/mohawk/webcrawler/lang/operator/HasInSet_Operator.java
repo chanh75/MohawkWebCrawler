@@ -42,31 +42,29 @@ public class HasInSet_Operator implements BaseOperator {
         Object p1Val = null;
         Object p2 = LangCore.resolveParameter(pageContext, params[1]);
 
-        if (p1 instanceof Variable) {
+        if (p1 instanceof Variable)
             p1Val = ((Variable) p1).getValue();
-        }
 
         if (p1Val instanceof String) {
             String strValue = (String) p1Val;
             Object[] set;
-            if (p2 instanceof String) {
+
+            if (p2 instanceof String)
                 set = new Object[] { p2 };
-            } else {
+            else
                 set = (Object[]) p2;
-            }
 
             for (Object s : set) {
-                if (strValue.indexOf((String) s) != -1) {
+                if (strValue.indexOf((String) s) != -1)
                     return true;
-                }
             }
-        } else if (p1Val instanceof Number) {
+        }
+        else if (p1Val instanceof Number) {
             Number numValue = (Number) p1Val;
             Object[] set = (Object[]) p2;
             for (Object s : set) {
-                if (numValue == ((Number) s)) {
+                if (numValue == ((Number) s))
                     return true;
-                }
             }
         }
 

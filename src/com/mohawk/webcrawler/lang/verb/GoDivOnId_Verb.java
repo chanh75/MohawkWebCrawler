@@ -40,27 +40,12 @@ public class GoDivOnId_Verb implements BaseVerb {
 
         Object idValue = LangCore.resolveParameter(pageContext, params[0]);
 
-        if (!(idValue instanceof String)) {
+        if (!(idValue instanceof String))
             throw new LanguageException("Parameter must resolve to a string literal");
-        }
 
         String idString = (String) idValue;
-
         Element element = pageContext.getDocumnet().getElementById(idString);
 
-        /*
-        int index = pageContext.indexOfFromCurrent("<div>");
-        if (index == -1) {
-            return false;
-        } else {
-
-            String html = pageContext.getDocumentHtml();
-            //System.out.println("html>> " + html.substring(index, index + 30));
-
-            pageContext.setCursorPosition(index);
-            return true;
-        }
-        */
         return true;
     }
 

@@ -44,7 +44,7 @@ public class ScriptExecutor {
      * @throws IOException
      * @throws Exception
      */
-    public static void exec(ScriptContext pageContext, LinkedList executable)
+    public static void exec(ScriptContext pageContext, LinkedList<BaseToken> executable)
     throws IOException, Exception {
 
         try {

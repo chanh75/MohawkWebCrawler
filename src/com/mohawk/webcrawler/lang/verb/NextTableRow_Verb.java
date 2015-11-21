@@ -45,14 +45,12 @@ public class NextTableRow_Verb implements BaseVerb {
         int curRowPos = tableContext.getEndRowPositionInTable();
 
         int startTagPos = HtmlUtils.indexOfStartTag(tableHtml, "<tr>", curRowPos);
-        if (startTagPos == -1) {
+        if (startTagPos == -1)
             return false;
-        }
 
         int endPos = tableHtml.indexOf("</tr>", startTagPos) ;
-        if (endPos == -1) {
+        if (endPos == -1)
             throw new NotFoundException("</tr> not found within table context.");
-        }
 
         int endTagPos = endPos + "</tr>".length();
         String rowText = tableHtml.substring(startTagPos, endTagPos);

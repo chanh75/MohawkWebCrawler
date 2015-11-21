@@ -37,7 +37,7 @@ public class Tokenizer {
 
     public LinkedList<String> tokenize(String s) {
 
-        LinkedList<String> tokens = new LinkedList<String>();
+        LinkedList<String> tokens = new LinkedList<>();
         StringBuffer sb = new StringBuffer();
 
         int len = s.length();
@@ -97,6 +97,8 @@ public class Tokenizer {
                     break;
                 case BLOCK_COMMENT:
                     break;
+                case INLINE_COMMENT:
+
             }
         }
 
