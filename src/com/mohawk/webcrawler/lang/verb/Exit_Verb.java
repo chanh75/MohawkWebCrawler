@@ -19,7 +19,7 @@ import com.mohawk.webcrawler.lang.BaseVerb;
 import com.mohawk.webcrawler.lang.ExitException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class Exit_Verb implements BaseVerb {
+public class Exit_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

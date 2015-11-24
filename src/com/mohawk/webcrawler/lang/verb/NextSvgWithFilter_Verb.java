@@ -22,7 +22,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.ScriptContext.SvgContext;
 
-public class NextSvgWithFilter_Verb implements BaseVerb {
+public class NextSvgWithFilter_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

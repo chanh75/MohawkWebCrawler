@@ -20,7 +20,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class HasInSet_Operator implements BaseOperator {
+public class HasInSet_Operator extends BaseOperator {
 
     @Override
     public int numOfParams() {

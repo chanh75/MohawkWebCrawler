@@ -20,7 +20,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class Assign_Operator implements BaseOperator {
+public class Assign_Operator extends BaseOperator {
 
     @Override
     public int numOfParams() {
@@ -38,7 +38,6 @@ public class Assign_Operator implements BaseOperator {
         String varName = ((Variable) params[0]).getName();
         Object value = LangCore.resolveParameter(pageContext, params[1]);
         pageContext.setLocalVariable(varName, value);
-
         return null;
     }
 

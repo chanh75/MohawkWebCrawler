@@ -30,6 +30,7 @@ import com.mohawk.webcrawler.lang.BaseEndScope;
 import com.mohawk.webcrawler.lang.BaseLiteral;
 import com.mohawk.webcrawler.lang.BaseToken;
 import com.mohawk.webcrawler.lang.BaseVariable;
+import com.mohawk.webcrawler.lang.BaseVerb;
 import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.verb.ElseIf_Verb;
@@ -47,9 +48,9 @@ public class ScriptCompiler {
      * @throws IOException
      * @throws Exception
      */
-    public static LinkedList<BaseToken> compile(String filename) throws IOException, Exception {
+    public ScriptExecutable compile(File file) throws IOException, CompilationException {
 
-        List<String> lines = FileUtils.readLines(new File(filename), "UTF-8");
+        List<String> lines = FileUtils.readLines(file, "UTF-8");
         StringBuffer fileContents = new StringBuffer();
 
         CommentRemover comment = new CommentRemover();
@@ -61,7 +62,10 @@ public class ScriptCompiler {
 
         // reorganize the tokens into scopes
         return compile0(fileContents.toString());
+    }
 
+    public ScriptExecutable compile(String contents) throws CompilationException {
+        return compile0(contents);
     }
 
     /**
@@ -71,7 +75,7 @@ public class ScriptCompiler {
      * @return
      * @throws CompilationException
      */
-    private static LinkedList<BaseToken> compile0(String programText)
+    private static ScriptExecutable compile0(String programText)
     throws CompilationException {
 
         Pattern p = Pattern.compile("\"[^\"]+\"|\\([^\\)]+\\)|[^ \r\n]+");
@@ -87,12 +91,11 @@ public class ScriptCompiler {
                 tokensQueue.add(token);
         }
 
-     // root scope, wil contain both String and BaseVerb objects
+        // root scope, wil contain both String and BaseVerb objects
         LinkedList<BaseToken> rootScope = new LinkedList<>();
-
         addScope(tokensQueue, rootScope);
 
-        return rootScope;
+        return new ScriptExecutable(rootScope);
     }
 
     /**
@@ -161,12 +164,11 @@ public class ScriptCompiler {
                 whileVerb.setExpression(evaluation);
 
                 parentScope.add(whileVerb);
-                addScope(tokens, whileVerb);
-
+                addScope(tokens, whileVerb.createScope());
             }
             else if (LangCore.isVerb(token)) { // verb
                 try {
-                    parentScope.add(LangCore.createVerbObject((String) token));
+                    parentScope.add(LangCore.createVerbToken((String) token));
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -175,7 +177,7 @@ public class ScriptCompiler {
             }
             else if (LangCore.isLiteral(token)) {  // literal
                 try {
-                    parentScope.add(new BaseLiteral(LangCore.createLiteral(token)));
+                    parentScope.add(new BaseLiteral(LangCore.createLiteralObject(token)));
                 }
                 catch (LanguageException e) {
                     throw new CompilationException(e.getLocalizedMessage());
@@ -183,7 +185,7 @@ public class ScriptCompiler {
             }
             else if (LangCore.isOperator(token)) { // operator
                 try {
-                    parentScope.add(LangCore.createOperatorObject(token));
+                    parentScope.add(LangCore.createOperatorToken(token));
                 }
                 catch (LanguageException e) {
                     throw new CompilationException(e.getLocalizedMessage());

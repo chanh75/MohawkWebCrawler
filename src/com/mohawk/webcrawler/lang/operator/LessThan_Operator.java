@@ -21,7 +21,7 @@ import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class LessThan_Operator implements BaseOperator {
+public class LessThan_Operator extends BaseOperator {
 
     @Override
     public int numOfParams() {

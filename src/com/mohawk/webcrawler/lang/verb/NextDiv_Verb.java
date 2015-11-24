@@ -18,7 +18,7 @@ package com.mohawk.webcrawler.lang.verb;
 import com.mohawk.webcrawler.lang.BaseVerb;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class NextDiv_Verb implements BaseVerb {
+public class NextDiv_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

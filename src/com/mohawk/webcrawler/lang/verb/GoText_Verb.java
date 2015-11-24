@@ -21,7 +21,7 @@ import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.ScriptContext.SvgContext;
 
-public class GoText_Verb implements BaseVerb {
+public class GoText_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

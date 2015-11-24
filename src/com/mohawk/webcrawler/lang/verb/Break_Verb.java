@@ -19,7 +19,7 @@ import com.mohawk.webcrawler.lang.BaseVerb;
 import com.mohawk.webcrawler.lang.BreakException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class Break_Verb implements BaseVerb {
+public class Break_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

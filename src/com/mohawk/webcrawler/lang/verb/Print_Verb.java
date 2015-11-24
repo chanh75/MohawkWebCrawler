@@ -20,7 +20,7 @@ import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class Print_Verb implements BaseVerb {
+public class Print_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {
@@ -36,7 +36,10 @@ public class Print_Verb implements BaseVerb {
     public Object run(ScriptContext scriptContext, Object ... params) throws Exception {
 
         Object p1 = LangCore.resolveParameter(scriptContext, params[0]);
-        System.out.println("Print: " + String.valueOf(p1));
+        String line = "Print: " + String.valueOf(p1) + System.lineSeparator();
+
+        System.out.print(line);
+        scriptContext.addConsoleOutput(line);
         return null;
     }
 }

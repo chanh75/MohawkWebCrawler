@@ -21,7 +21,7 @@ package com.mohawk.webcrawler.lang;
  * @author cnguyen
  *
  */
-public interface BaseOperator extends BaseToken {
+public abstract class BaseOperator extends BaseToken {
 
     public enum OperReturnType {
         VOID,
@@ -32,13 +32,13 @@ public interface BaseOperator extends BaseToken {
      *
      * @return number of parameters that the operator requires
      */
-    public int numOfParams();
+    public abstract int numOfParams();
 
     /**
      *
      * @return return type of operator
      */
-    public OperReturnType returnType();
+    public abstract OperReturnType returnType();
 
     /**
      * Invoked by the engine when the operator is to be executed.
@@ -48,6 +48,7 @@ public interface BaseOperator extends BaseToken {
      * @return
      * @throws Exception
      */
-    public Object run(ScriptContext scriptContext, Object ... params) throws Exception;
+    public abstract Object run(ScriptContext scriptContext, Object ... params)
+            throws Exception;
 
 }

@@ -15,6 +15,7 @@
  */
 package com.mohawk.webcrawler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -70,46 +71,40 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-
             ParamContext arg = new ParamContext(args);
+            //ScriptContext.Config config = ;
 
-            ScriptContext.Config config = new ScriptContext.Config();
+            ScriptContext scriptContext = new ScriptContext(
+                    (new ScriptContext.Config())
+                        .setScriptFilename(arg.getScriptName())
+                        .setEnvironmentVariables(arg.getConstants())
+                        .setCacheDirectory(arg.getCacheDirectory())
+                        .setDebug(arg.debug())
+                        );
 
-            config.setScriptFilename(arg.getScriptName());
-            config.setEnvironmentVariables(arg.getConstants());
-            config.setCacheDirectory(arg.getCacheDirectory());
-            config.setDebug(arg.debug());
+            String scriptFile = arg.getScriptName();
 
-            ScriptContext scriptContext = new ScriptContext(config);
-
-            String scriptFile = config.getScriptFilename();
-
-            // compile the script
-            System.out.printf("Compiling script>> %s\n", scriptFile);
-            LinkedList executable = ScriptCompiler.compile(scriptFile);
 
             // execute the script
             System.out.println("Executing script>> " + scriptFile);
-            ScriptExecutor.exec(scriptContext, executable);
+            ScriptOutput out = (new ScriptCompiler())
+                .compile(new File(scriptFile))
+                .executeWithContext(scriptContext);
 
             // print dataset
-            ArrayList<ScriptContext.DataSet> dataSet = scriptContext.getDataSet();
-            System.out.println("\n");
+            ArrayList<ScriptContext.DataSet> dataSet = /*scriptContext*/out.getDataSet();
+            System.out.println("\nCommited:");
             for (ScriptContext.DataSet row : dataSet) {
-                if (row.getValue().length == 1) {
-                    System.out.println("row>> " + row.getLabel() + ":" + row.getValue()[0]);
-                } else {
-                    System.out.println("row>> " + row.getLabel() + ":" + Arrays.toString(row.getValue()));
-                }
+                if (row.getValue().length == 1)
+                    System.out.printf("row>> %s : %s\r\n", row.getLabel(), row.getValue()[0]);
+                else
+                    System.out.printf("row>> %s : %s\r\n", row.getLabel(), Arrays.toString(row.getValue()));
             }
-
             System.out.println("WebCrawler done!");
-
-        } catch (Exception e) {
-
+        }
+        catch (Exception e) {
             // log error in the database
             e.printStackTrace();
-
         }
 
     }

@@ -34,7 +34,21 @@ import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.verb.ElseIf_Verb;
 import com.mohawk.webcrawler.lang.verb.If_Verb;
 
-public class ScriptExecutor {
+public class ScriptExecutable {
+
+    private LinkedList<BaseToken> _tokens;
+
+    public ScriptExecutable(LinkedList<BaseToken> tokens) {
+        _tokens = tokens;
+    }
+
+    public ScriptOutput executeWithContext(ScriptContext scriptContext) throws Exception {
+
+        exec0(scriptContext, _tokens);
+        return (new ScriptOutput())
+                .setDataSet(scriptContext.getDataSet())
+                .setConsoleOutput(scriptContext.getConsoleOutput());
+    }
 
     /**
      * Executes the stack of tokens and verbs.  The stack is generated from the ScriptCompiler process.
@@ -44,11 +58,11 @@ public class ScriptExecutor {
      * @throws IOException
      * @throws Exception
      */
-    public static void exec(ScriptContext pageContext, LinkedList<BaseToken> executable)
+    private void exec(ScriptContext scriptContext, LinkedList<BaseToken> executable)
     throws IOException, Exception {
 
         try {
-            exec0(pageContext, executable);
+            exec0(scriptContext, executable);
         } catch (ExitException e) { // catch exit verb
 
         }
@@ -69,6 +83,7 @@ public class ScriptExecutor {
 
         for (int i = 0; i < len; i++) {
             Object token = executable.get(i);
+
             if (token instanceof BaseEndScope)
                 return;
             else if (token instanceof BaseLoopVerb) { // while loop
@@ -77,7 +92,7 @@ public class ScriptExecutor {
                 loop.setPageContext(pageContext);
                 try {
                     while (loop.shouldLoop())
-                        exec0(pageContext, loop);
+                        exec0(pageContext, loop.getScope());
                 }
                 catch (BreakException e) { }
             }
@@ -134,7 +149,7 @@ public class ScriptExecutor {
                 operObj.run(pageContext, params);
             }
             else
-                throw new LanguageException("Undefined code logic for token>> " + token);
+                throw new LanguageException("Undefined code logic for token>> " + ((BaseToken) token).getName());
         }
     }
 }

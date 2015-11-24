@@ -1,14 +1,8 @@
 package com.mohawk.webcrawler.lang;
 
-public class BaseEndScope implements BaseToken {
+public class BaseEndScope extends BaseToken {
 
-    private String name;
-
-    public BaseEndScope(String s) {
-        this.name = s;
-    }
-
-    public String getName() {
-        return this.name;
+    public BaseEndScope(String name) {
+        super.setName(name);
     }
 }

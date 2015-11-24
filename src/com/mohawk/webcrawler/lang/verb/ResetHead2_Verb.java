@@ -19,7 +19,7 @@ import com.mohawk.webcrawler.lang.BaseVerb;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 
-public class ResetHead2_Verb implements BaseVerb {
+public class ResetHead2_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

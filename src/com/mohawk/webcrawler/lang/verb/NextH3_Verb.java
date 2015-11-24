@@ -21,7 +21,7 @@ import com.mohawk.webcrawler.lang.NotFoundException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 
-public class NextH3_Verb implements BaseVerb {
+public class NextH3_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

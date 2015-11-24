@@ -1,6 +1,6 @@
 package com.mohawk.webcrawler.lang;
 
-public class BaseLiteral<T> implements BaseToken {
+public class BaseLiteral<T> extends BaseToken {
 
     private T value;
 

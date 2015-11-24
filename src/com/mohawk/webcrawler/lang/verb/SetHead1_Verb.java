@@ -20,7 +20,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class SetHead1_Verb implements BaseVerb {
+public class SetHead1_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

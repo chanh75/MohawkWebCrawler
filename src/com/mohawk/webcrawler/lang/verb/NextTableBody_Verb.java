@@ -23,7 +23,7 @@ import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 import com.mohawk.webcrawler.lang.ScriptContext.TableContext;
 
-public class NextTableBody_Verb implements BaseVerb {
+public class NextTableBody_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

@@ -23,7 +23,7 @@ import com.mohawk.webcrawler.lang.NotSetException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class GetTag_Verb implements BaseVerb {
+public class GetTag_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

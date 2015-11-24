@@ -20,7 +20,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class NextText_Verb implements BaseVerb {
+public class NextText_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

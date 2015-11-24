@@ -29,7 +29,7 @@ import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.ScriptContext.Config;
 
-public class GetUrl_Verb implements BaseVerb {
+public class GetUrl_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

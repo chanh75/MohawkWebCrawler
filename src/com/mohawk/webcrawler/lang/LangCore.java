@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.mohawk.webcrawler.CompilationException;
 import com.mohawk.webcrawler.Tokenizer;
 import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 
@@ -107,72 +108,48 @@ public class LangCore {
 
         // remove ()
         String exp0 = exp.substring(1, exp.length() - 1);
-        LinkedList tokens = (new Tokenizer()).tokenize(exp0);
+        LinkedList<BaseToken> tokens = (new Tokenizer()).tokenize(exp0);
         int index = 0;
 
         do {
-            Object tokenObj = tokens.get(index);
+            BaseToken tokenObj = tokens.get(index);
 
-            if (tokenObj instanceof Boolean) {
+            if (tokenObj instanceof BaseLiteral) {
                 index++;
                 continue;
             }
-
-            String token = (String) tokenObj;
-            if (hasUnaryOperator(token)) { // operators ++ or --
-                String[] operation = parseUnaryOperator(token);
-                BaseOperator operatorObj = createOperatorObject(operation[0]);
-                try {
-                    operatorObj.run(scriptContext, operation[1]);
-                    tokens.remove(index);
-                    tokens.add(index, operation[1]);
-                    index++;
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    throw new LanguageException(e.getLocalizedMessage());
-                }
-            }
-            else if (isVerb(token)) { // invoke verb
+            else if (tokenObj instanceof BaseVerb) { // invoke verb
 
                 tokens.remove(index);
-                BaseVerb verbObject = createVerbObject(token);
+                BaseVerb verbObject = (BaseVerb) tokenObj;
 
                 if (verbObject.returnType() == ReturnType.VOID)
                     throw new LanguageException("Verb with void return cannot be in expression.");
 
                 int paramsRequired = verbObject.numOfParams();
                 if (paramsRequired == 0)
-                    tokens.add(invokeVerb(verbObject, scriptContext));
+                    tokens.add(new BaseLiteral(invokeVerb(verbObject, scriptContext)));
                 else if (paramsRequired > 0) {
-                    String[] params = new String[paramsRequired];
+                    BaseToken[] params = new BaseToken[paramsRequired];
                     for (int j = 0; j < paramsRequired; j++)
-                        params[j] = (String) tokens.remove(index + j);
+                        params[j] = tokens.remove(index + j);
 
-                    tokens.add(index, invokeVerb(verbObject, params, scriptContext));
+                    tokens.add(index, new BaseLiteral(invokeVerb(verbObject, params, scriptContext)));
                 }
                 index++;
             }
-            else if (isConditionalOperator(token)) {
+            else if (tokenObj instanceof BaseOperator) {
 
-                Boolean p1 = (Boolean) tokens.get(index - 1);
-                Object p2 = tokens.get(index + 1);
+                BaseOperator operObj = (BaseOperator) tokenObj;
 
-                if (!(p2 instanceof Boolean))
-                    index++;
-                else {
+                if (hasUnaryOperator(operObj.getName())) { // operators ++ or --
+
+                    String[] operation = parseUnaryOperator((BaseOperator) tokenObj);
+                    BaseOperator operatorObj = createOperatorToken(operation[0]);
                     try {
-                        BaseOperator opObj = createOperatorObject(token);
-                        Boolean result = (Boolean) opObj.run(scriptContext, p1, p2);
-                        if (!result) {
-                            return false;
-                        }
-                        else {
-                            tokens.remove(index - 1);
-                            tokens.remove(index - 1);
-                            tokens.remove(index - 1);
-                            tokens.add(index - 1, result);
-                        }
+                        operatorObj.run(scriptContext, operation[1]);
+                        tokens.remove(index);
+                        tokens.add(index, LangCore.createBaseToken(operation[1]));
                         index++;
                     }
                     catch (Exception e) {
@@ -180,36 +157,57 @@ public class LangCore {
                         throw new LanguageException(e.getLocalizedMessage());
                     }
                 }
-            }
-            else if (isOperator(token)) {
+                else if (isConditionalOperator(operObj.getName())) { // && or ||
 
-                BaseOperator opObj = createOperatorObject(token);
-                Object[] params = new Object[2];
-                params[0] = tokens.remove(index - 1);
-                tokens.remove(index - 1); // remove operator
-                params[1] = tokens.remove(index - 1);
-                try {
-                    Boolean result = (Boolean) opObj.run(scriptContext, params);
-                    tokens.add(index - 1, result);
-                    index = 0; // reset
+                    BaseToken p1 = tokens.get(index - 1);
+                    BaseToken p2 = tokens.get(index + 1);
+                    if (!(p2 instanceof BaseLiteral))
+                        index++;
+                    else {
+                        try {
+                            Boolean result = (Boolean) operObj.run(scriptContext, p1, p2);
+                            if (!result)
+                                return false;
+                            else {
+                                tokens.remove(index - 1);
+                                tokens.remove(index - 1);
+                                tokens.remove(index - 1);
+                                tokens.add(index - 1, new BaseLiteral(result));
+                            }
+                            index++;
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                            throw new LanguageException(e.getLocalizedMessage());
+                        }
+                    }
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    throw new LanguageException(e.getLocalizedMessage());
+                else {
+                    BaseToken[] params = new BaseToken[2];
+                    params[0] = tokens.remove(index - 1);
+                    tokens.remove(index - 1); // remove operator
+                    params[1] = tokens.remove(index - 1);
+                    try {
+                        Boolean result = (Boolean) operObj.run(scriptContext, params);
+                        tokens.add(index - 1, new BaseLiteral(result));
+                        index = 0; // reset
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        throw new LanguageException(e.getLocalizedMessage());
+                    }
                 }
             }
-            else if (isLiteral(token)) {
+            else if (tokenObj instanceof BaseLiteral)
                 index++;
-            }
-            else if (scriptContext.hasLocalVariable(token)) {
+            else if (tokenObj instanceof BaseVariable)
                 index++;
-            }
-            else {
-                throw new LanguageException("Unable to resolve token '" + token + "' in expression>> " + exp);
-            }
+            else
+                throw new LanguageException("Unable to resolve token '" + tokenObj + "' in expression>> " + exp);
+
         } while (tokens.size() > 1);
 
-        return (Boolean) tokens.remove();
+        return (Boolean) ((BaseLiteral) tokens.remove()).getValue();
     }
 
     /**
@@ -220,7 +218,7 @@ public class LangCore {
      * @throws LanguageException
      */
     public static Object resolveParameter(ScriptContext scriptContext, Object param)
-    throws LanguageException {
+            throws LanguageException {
 
         if (param instanceof BaseLiteral) {
             Object value = ((BaseLiteral) param).getValue();
@@ -229,27 +227,14 @@ public class LangCore {
             else
                 return value;
         }
-        else if (param instanceof BaseVariable)
-            return scriptContext.getLocalVariable(((BaseVariable) param).getName());
-        else if (param instanceof String) { // if string literal, do variable injection
-            String sparam = (String) param;
-            if (LangCore.isStringLiteral(sparam))
-                return LangCore.createStringLiteral(LangCore.injectVars(scriptContext, sparam));
-            else if (LangCore.isLiteral(sparam))
-                return LangCore.createLiteral(sparam);
-            else if (scriptContext.hasLocalVariable(sparam))
-                return scriptContext.getLocalVariable(sparam);
+        else if (param instanceof BaseVariable) {
+            String varName = ((BaseVariable) param).getName();
+            return scriptContext.getLocalVariable(varName);
         }
-        else if (param instanceof Boolean)
-            return param;
-        else if (param instanceof Integer)
-            return param;
-        else if (param instanceof Double)
-            return param;
         else if (param instanceof Variable)
-            return param;
-
-        throw new LanguageException("Unable to resolve parameter>> " + param);
+            return (Variable) param;
+        else
+            throw new LanguageException("Unable to resolve parameter>> " + param);
     }
 
     public static boolean isOperator(String op) {
@@ -260,9 +245,9 @@ public class LangCore {
         return OPERATOR_CLASS_MAP.containsKey(op) && ("&&".equals(op) || "||".equals(op));
     }
 
-    private static boolean hasUnaryOperator(String exp) {
-        return ((exp.startsWith("!") && !exp.startsWith("!=")) || exp.startsWith("++") || exp.endsWith("++")
-                || exp.startsWith("--") || exp.endsWith("--"));
+    private static boolean hasUnaryOperator(String op) {
+        return ((op.startsWith("!") && !op.startsWith("!=")) || op.startsWith("++") || op.endsWith("++")
+            || op.startsWith("--") || op.endsWith("--"));
     }
 
     /**
@@ -271,7 +256,10 @@ public class LangCore {
      * @return
      * @throws LanguageException
      */
-    private static String[] parseUnaryOperator(String exp) throws LanguageException {
+    private static String[] parseUnaryOperator(BaseOperator operator) throws LanguageException {
+
+        String exp = operator.getName();
+
         if (exp.startsWith("!"))
             return new String[] { exp.substring(0, 1), exp.substring(1) };
         else if (exp.startsWith("++"))
@@ -316,7 +304,7 @@ public class LangCore {
      * @return
      * @throws LanguageException
      */
-    public static Object createLiteral(Object token) throws LanguageException {
+    public static Object createLiteralObject(Object token) throws LanguageException {
 
         if (token instanceof String) {
 
@@ -331,7 +319,7 @@ public class LangCore {
                 int len = tokens.length;
                 Object[] ret = new Object[len];
                 for(int i = 0; i < len; i++)
-                    ret[i] = LangCore.createLiteral(tokens[i]);
+                    ret[i] = createLiteralObject(tokens[i]);
 
                 return ret;
             }
@@ -450,7 +438,7 @@ public class LangCore {
     protected static Object invokeVerb(String verbName, ScriptContext context)
     throws LanguageException {
         try {
-            BaseVerb verbObj = createVerbObject(verbName);
+            BaseVerb verbObj = createVerbToken(verbName);
             return verbObj.run(context, null);
         }
         catch (Exception e) {
@@ -481,13 +469,15 @@ public class LangCore {
         }
     }
 
-    public static BaseVerb createVerbObject(String verbName) throws LanguageException {
+    public static BaseVerb createVerbToken(String verbName) throws LanguageException {
         try {
             String fullClassName = resolveVerbSimpleClassName(verbName);
             if (fullClassName == null)
                 throw new LanguageException("Verb not found>> " + verbName);
 
-            return (BaseVerb) Class.forName(fullClassName).newInstance();
+            BaseVerb verbObj = (BaseVerb) Class.forName(fullClassName).newInstance();
+            verbObj.setName(verbName);
+            return verbObj;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -495,18 +485,34 @@ public class LangCore {
         }
     }
 
-    public static BaseOperator createOperatorObject(String operator) throws LanguageException {
+    public static BaseOperator createOperatorToken(String operator) throws LanguageException {
         try {
             String fullClassName = resolveOperatorSimpleClassName(operator);
             if (fullClassName == null)
                 throw new LanguageException("Operator not found>> " + operator);
 
-            return (BaseOperator) Class.forName(fullClassName).newInstance();
+            BaseOperator opObj = (BaseOperator) Class.forName(fullClassName).newInstance();
+            opObj.setName(operator);
+            return opObj;
         }
         catch (Exception e) {
             e.printStackTrace();
             throw new LanguageException(e.getLocalizedMessage());
         }
+    }
+
+    public static BaseToken createBaseToken(String token) throws LanguageException {
+
+        if (LangCore.isVerb(token)) // verb
+            return LangCore.createVerbToken(token);
+        else if (LangCore.isLiteral(token)) { // literal
+            Object literalValue = createLiteralObject(token);
+            return new BaseLiteral(literalValue);
+        }
+        else if (LangCore.isOperator(token)) // operator
+            return LangCore.createOperatorToken(token);
+        else // default to variable
+            return new BaseVariable(token);
     }
 
     /**

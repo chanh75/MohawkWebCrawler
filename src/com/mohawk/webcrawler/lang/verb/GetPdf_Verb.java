@@ -28,7 +28,7 @@ import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.BaseVerb.ReturnType;
 import com.mohawk.webcrawler.lang.ScriptContext.Config;
 
-public class GetPdf_Verb implements BaseVerb {
+public class GetPdf_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

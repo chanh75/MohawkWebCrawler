@@ -22,7 +22,7 @@ package com.mohawk.webcrawler.lang;
  * @author cnguyen
  *
  */
-public interface BaseVerb extends BaseToken {
+public abstract class BaseVerb extends BaseToken {
 
     public enum ReturnType {
         VOID,
@@ -32,8 +32,25 @@ public interface BaseVerb extends BaseToken {
         STRING
     }
 
-    public int numOfParams();
-    public ReturnType returnType();
-    public Object run(ScriptContext scriptContext, Object ... params) throws Exception;
+    /**
+     *
+     * @return
+     */
+    public abstract int numOfParams();
+
+    /**
+     *
+     * @return
+     */
+    public abstract ReturnType returnType();
+
+    /**
+     *
+     * @param scriptContext
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    public abstract Object run(ScriptContext scriptContext, Object ... params) throws Exception;
 
 }

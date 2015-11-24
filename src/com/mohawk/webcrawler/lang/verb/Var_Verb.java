@@ -19,7 +19,7 @@ import com.mohawk.webcrawler.lang.BaseVariable;
 import com.mohawk.webcrawler.lang.BaseVerb;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class Var_Verb implements BaseVerb {
+public class Var_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

@@ -23,7 +23,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class SvgXMax_Verb implements BaseVerb {
+public class SvgXMax_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

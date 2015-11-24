@@ -21,7 +21,7 @@ import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class WordCount_Verb implements BaseVerb {
+public class WordCount_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

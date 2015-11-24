@@ -21,7 +21,7 @@ import com.mohawk.webcrawler.lang.NotSetException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.ScriptContext.SvgContext;
 
-public class NextSvgG_Verb implements BaseVerb {
+public class NextSvgG_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

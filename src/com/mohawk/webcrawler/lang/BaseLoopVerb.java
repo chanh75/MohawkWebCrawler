@@ -15,8 +15,9 @@
  */
 package com.mohawk.webcrawler.lang;
 
+import java.util.Collection;
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * Base verb class for looping-based verbs
@@ -24,10 +25,11 @@ import java.util.Queue;
  * @author cnguyen
  *
  */
-public abstract class BaseLoopVerb<T> extends LinkedList<T> implements BaseVerb {
+public abstract class BaseLoopVerb extends BaseVerb {
 
     private String _expression = null;
     private ScriptContext _scriptContext = null;
+    private LinkedList<BaseToken> scope;
 
     public void setExpression(String expression) {
         _expression = expression;
@@ -43,6 +45,15 @@ public abstract class BaseLoopVerb<T> extends LinkedList<T> implements BaseVerb 
 
     public ScriptContext getPageContext() {
         return _scriptContext;
+    }
+
+    public LinkedList<BaseToken> createScope() {
+        this.scope = new LinkedList<>();
+        return this.scope;
+    }
+
+    public LinkedList<BaseToken> getScope() {
+        return this.scope;
     }
 
     public abstract boolean shouldLoop() throws LanguageException;

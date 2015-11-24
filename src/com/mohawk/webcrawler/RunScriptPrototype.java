@@ -76,7 +76,7 @@ public class RunScriptPrototype {
 
                 try {
                     while (loop.shouldLoop()) {
-                        runProgram(pageContext, loop);
+                        runProgram(pageContext, loop.getScope());
                     }
                 } catch (BreakException e) {
                 }
@@ -247,7 +247,7 @@ public class RunScriptPrototype {
                 whileVerb.setExpression(evaluation);
 
                 parentScope.add(whileVerb);
-                addScope(tokens, whileVerb);
+                addScope(tokens, whileVerb.createScope());
 
             } else {
 

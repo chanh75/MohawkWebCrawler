@@ -17,6 +17,10 @@ package com.mohawk.webcrawler;
 
 import java.util.LinkedList;
 
+import com.mohawk.webcrawler.lang.BaseToken;
+import com.mohawk.webcrawler.lang.LangCore;
+import com.mohawk.webcrawler.lang.LanguageException;
+
 /**
  *
  * @author cnguyen
@@ -35,9 +39,9 @@ public class Tokenizer {
 
     private State _state = State.NONE;
 
-    public LinkedList<String> tokenize(String s) {
+    public LinkedList<BaseToken> tokenize(String s) throws LanguageException {
 
-        LinkedList<String> tokens = new LinkedList<>();
+        LinkedList<BaseToken> tokens = new LinkedList<>();
         StringBuffer sb = new StringBuffer();
 
         int len = s.length();
@@ -105,17 +109,23 @@ public class Tokenizer {
         return tokens;
     }
 
-    private void addAndReset(LinkedList<String> tokens, StringBuffer sb) {
-        tokens.add(sb.toString());
+    private void addAndReset(LinkedList<BaseToken> tokens, StringBuffer sb)
+            throws LanguageException {
+
+        tokens.add(LangCore.createBaseToken(sb.toString()));
         sb.delete(0, sb.length());
     }
 
     public static void main(String[] args) {
-
-        String s1 = "nextsvgg";
-        String s2 = "this is a test \"query keyboard all the\" (head1 == \"font-family\") ~has [\"a\",\"b\",\"c\"]";
-        String s3 = "nextsvggf \"url(#clip{pageNum}-{cellNum})\"";
-        Tokenizer t = new Tokenizer();
-        System.out.println("output>> " + t.tokenize(s3));
+        try {
+            String s1 = "nextsvgg";
+            String s2 = "this is a test \"query keyboard all the\" (head1 == \"font-family\") ~has [\"a\",\"b\",\"c\"]";
+            String s3 = "nextsvggf \"url(#clip{pageNum}-{cellNum})\"";
+            Tokenizer t = new Tokenizer();
+            System.out.println("output>> " + t.tokenize(s3));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

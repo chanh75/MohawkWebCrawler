@@ -24,7 +24,7 @@ import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public abstract class CommitRow_Verb implements BaseVerb {
+public abstract class CommitRow_Verb extends BaseVerb {
 
     @Override
     public ReturnType returnType() {

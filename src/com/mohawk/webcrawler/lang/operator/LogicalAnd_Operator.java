@@ -20,7 +20,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class LogicalAnd_Operator implements BaseOperator {
+public class LogicalAnd_Operator extends BaseOperator {
 
     @Override
     public int numOfParams() {

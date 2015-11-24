@@ -44,26 +44,30 @@ public class ScriptContext {
         public boolean getDebug() {
             return this.debug;
         }
-        public void setDebug(boolean b) {
+        public Config setDebug(boolean b) {
             this.debug = b;
+            return this;
         }
         public String getScriptFilename() {
             return this.scriptFilename;
         }
-        public void setScriptFilename(String f) {
+        public Config setScriptFilename(String f) {
             this.scriptFilename = f;
+            return this;
         }
         public String getEnvironmentVariables() {
             return this.environmentVars;
         }
-        public void setEnvironmentVariables(String s) {
+        public Config setEnvironmentVariables(String s) {
             this.environmentVars = s;
+            return this;
         }
         public String getCacheDirectory() {
             return this.cacheDirectory;
         }
-        public void setCacheDirectory(String d) {
+        public Config setCacheDirectory(String d) {
             this.cacheDirectory = d;
+            return this;
         }
     }
 
@@ -234,6 +238,7 @@ public class ScriptContext {
     private TableContext _tableContext;
     private SvgContext _svgContext;
     private HashMap<String, Object> _localVariables = new HashMap<String, Object>();
+    private StringBuffer _consoleOutput = new StringBuffer();
 
     private String _holdServiceHead1;
     private String _holdServiceHead2;
@@ -241,6 +246,10 @@ public class ScriptContext {
     private String _holdServicePrice;
 
     private ArrayList<DataSet> _dataSet = new ArrayList<DataSet>();
+
+    public static ScriptContext createWithDefaultConfig() {
+        return new ScriptContext(new Config());
+    }
 
     public ScriptContext (Config config) {
         _config = config;
@@ -413,5 +422,13 @@ public class ScriptContext {
 
     public ArrayList<DataSet> getDataSet() {
         return _dataSet;
+    }
+
+    public void addConsoleOutput(String s) {
+        _consoleOutput.append(s);
+    }
+
+    public String getConsoleOutput() {
+        return _consoleOutput.toString();
     }
 }

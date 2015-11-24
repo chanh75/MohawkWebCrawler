@@ -23,7 +23,7 @@ import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class AddThenAssign_Operator implements BaseOperator {
+public class AddThenAssign_Operator extends BaseOperator {
 
     @Override
     public int numOfParams() {

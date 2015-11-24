@@ -22,7 +22,7 @@ import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 import com.mohawk.webcrawler.lang.Variable;
 
-public class GetText_Verb implements BaseVerb {
+public class GetText_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {

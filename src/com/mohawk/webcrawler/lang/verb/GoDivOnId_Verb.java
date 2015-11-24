@@ -22,7 +22,7 @@ import com.mohawk.webcrawler.lang.LangCore;
 import com.mohawk.webcrawler.lang.LanguageException;
 import com.mohawk.webcrawler.lang.ScriptContext;
 
-public class GoDivOnId_Verb implements BaseVerb {
+public class GoDivOnId_Verb extends BaseVerb {
 
     @Override
     public int numOfParams() {
